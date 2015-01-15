@@ -12,6 +12,7 @@ function count_syllables(word){
 	lastchar = '';
 
 	word = word.toLowerCase();
+	word = word.trim();
 	
 	// for each character
 	for (var i = 0; i < word.length; i++){
@@ -48,21 +49,35 @@ function count_syllables(word){
 	
 	// special cases
 	
-	// deduct 1 from minsyl for e
-	if (word[-1] == 'e'){
+	// deduct 1 from minsyl for ending in 'e'
+	if (word.charAt(word.length-1) == 'e'){
 		minsyl -= 1;
 	}
 	
-	// add 1 to maxsyl for y
-	if ((word[-1] == 'y') && (on_vowel == false)){
+	
+	
+	// add 1 to maxsyl for 'y'
+	if ((word.charAt(word.length-1) == 'y') && (on_vowel == false)){
 		maxsyl += 1
 	}
 	
 	// if the word is less than 5 chars, set minsyl to 1
-	if (word.length <= 5){
+	if (word.length <= 5 && countOccurrences(word, 'ea') > 0) {
 		minsyl = 1;
 	}
 	
+	// deduct 1 from minsyl if the word contains 'ea' and it's > 5 chars
+	if (word.length > 5 && countOccurrences(word, 'ea') > 0) {
+		minsyl -= countOccurrences('ea');
+	}
+	
+	if (minsyl < 0){ minsyl=1};
+		
+	return [minsyl, maxsyl];
+}
 
-return [minsyl, maxsyl]
+
+function countOccurrences(str, value){
+   var regExp = new RegExp(value, "gi");
+   return str.match(regExp) ? str.match(regExp).length : 0;  
 }
