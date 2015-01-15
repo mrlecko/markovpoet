@@ -23,9 +23,9 @@ function speakit(text){
 // __main__ for generating results
 //
 function run(sources, config){
-	corpus = compileSources(sources, config);   	// build corpus
-	chains = getMarkov(corpus, config);				// generate chains
-	output = postProc(chains, config);				// post-process
+	var corpus = compileSources(sources, config);   	// build corpus
+	var chains = getMarkov(corpus, config);				// generate chains
+	var output = postProc(chains, config);				// post-process
 	return renderOutput(output);					// display
 } 
 
@@ -34,10 +34,10 @@ function run(sources, config){
 // compile and NLP pre-process all the sources
 //		
 function compileSources(sources, config){
-	corpus = "";
+	var corpus = "";
 	for (var i = 0; i < sources.length; i++) {
 		// pre process the text
-		t = NLPPreProcess(sources[i].text);
+		var t = NLPPreProcess(sources[i].text);
 		// validate and add to the corpus
 		if (t.length > 0){
 			corpus += t;
@@ -102,8 +102,8 @@ function NLPPreProcess(text){
 // Count syllables in a sequence of text
 //
 function countSyllables(text){
-	words = text.split(/[\.\!\?, ]+/g);
-	sylcount = 0;
+	var words = text.split(/[\.\!\?, ]+/g);
+	var sylcount = 0;
 	for (var w = 0; w < words.length; w++) {
 		sylcount += (count_syllables(words[w])[0]); //0=min syls, 1=max syls
 	}
@@ -117,10 +117,10 @@ function countSyllables(text){
 function selectChainsBySyllables(syls, chains, syllable_map){
 	console.log('selecting chains by', syls);
 	console.log('syllable_map:', syllable_map);
-	result = [];
+	var result = [];
 	for (var i = 0; i < syls.length; i++) {
-		tmp = [];
-		this_syl = syls[i];
+		var tmp = [];
+		var this_syl = syls[i];
 		// get candidate chains that match syllable count
 		for (var j = 0; j < syllable_map.length; j++) {
 			//console.log('current syllable_map item:', syllable_map[j]);
@@ -145,19 +145,19 @@ function postProc(chains, config){
 	//
 	// return by syllable pattern
 	if (config.syllables != '') {
-		syls = config.syllables.split(',');
+		var syls = config.syllables.split(',');
 		for (var i = 0; i < syls.length; i++) {
 			syls[i] = parseInt(syls[i]);
 		}
 		console.log('looking for syllable pattern:', syls);
 		// loop over the chains and build syllable map
-		syllable_map = []
+		var syllable_map = []
 		for (var i = 0; i < chains.length; i++) {
-			this_chain = chains[i];
+			var this_chain = chains[i];
 			syllable_map.push(countSyllables(this_chain));
 		}
 		// perform chain sellection
-		haiku = selectChainsBySyllables(syls, chains, syllable_map);
+		var haiku = selectChainsBySyllables(syls, chains, syllable_map);
 		console.log('syllable generated chains:', haiku);
 		if (haiku.length == syls.length) {
 			return haiku;
