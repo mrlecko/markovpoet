@@ -1,6 +1,6 @@
 /* 
-	Nickys markov generator
-							*/
+    Nickys markov generator
+                            */
 
 // Take a block of text and produce a object
 // containing the possible transition states
@@ -15,7 +15,7 @@ function parse_text(text) {
   // use full stops to determine when to 
   // end a setence.
   for (i=0; i < stripped.length; i++) {
-	stripped[i].split(".");
+    stripped[i].split(".");
   }
   
   result[stripped[0]] = [stripped[1]];
@@ -24,12 +24,12 @@ function parse_text(text) {
   // that can be transitioned to based on the text.
   for (i=1, lens = stripped.length; i < lens; i++) 
   {
-	if (stripped[i] in result) {
-	  result[stripped[i]].push(stripped[i+1]);
-	}
-	else {
-	  result[stripped[i]] = [stripped[i+1]];
-	}
+    if (stripped[i] in result) {
+      result[stripped[i]].push(stripped[i+1]);
+    }
+    else {
+      result[stripped[i]] = [stripped[i+1]];
+    }
   };
   
   // Return the transition states and the
@@ -47,8 +47,8 @@ function generate_text(parsed_tree, start) {
   // Build a new sentence every time we hit the
   // end of the text or a full stop.
   while (word !== undefined && word !== ".") {
-	output += word + " ";
-	word = rand_array_pick(parsed_tree[word]);
+    output += word + " ";
+    word = rand_array_pick(parsed_tree[word]);
   }
   
   // Cut the sentences up into an array.
