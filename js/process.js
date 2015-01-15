@@ -105,8 +105,19 @@ function countSyllables(text){
 	var words = text.split(/[\.\!\?, ]+/g);
 	var sylcount = 0;
 	for (var w = 0; w < words.length; w++) {
-		sylcount += (count_syllables(words[w])[0]); //0=min syls, 1=max syls
+		var word = words[w].trim()
+		// pass on a zero length token
+		if (word.length == 0){
+			continue;
+		// add 1 if it's a 1-3 character word 
+		} else if (word.length > 0 && word.length <= 3) {
+			sylcount += 1;
+		// else use the calculator
+		} else {
+			sylcount += (count_syllables(word)[0]); //0=min syls, 1=max syls
+		}
 	}
+	console.log('syllable count', sylcount, 'for text:', text);
 	return sylcount;
 }
 

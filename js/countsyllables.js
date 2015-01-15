@@ -47,13 +47,22 @@ function count_syllables(word){
 	};
 	
 	// special cases
+	
+	// deduct 1 from minsyl for e
 	if (word[-1] == 'e'){
 		minsyl -= 1;
 	}
 	
+	// add 1 to maxsyl for y
 	if ((word[-1] == 'y') && (on_vowel == false)){
 		maxsyl += 1
 	}
+	
+	// if the word is less than 5 chars, set minsyl to 1
+	if (word.length <= 5){
+		minsyl = 1;
+	}
+	
 
 return [minsyl, maxsyl]
 }
