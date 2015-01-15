@@ -1,0 +1,14 @@
+#sources {float:left;}
+
+#configpanel {background-color:#eee; width:300px; float:right;}
+
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+* {
+  -webkit-border-radius: 0 !important;
+	 -moz-border-radius: 0 !important;
+		  border-radius: 0 !important;
+  }
+  
+#output p { width:100%; text-align: center; }
+

@@ -1,0 +1,135 @@
+<html ng-app="app">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+		<title>Markov Thing</title>
+		
+		<!-- cdn css -->
+		<link rel="stylesheet" href="http//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="./css/style.css">
+		<link rel="icon" type="image/png" href="favicon.png">
+		
+		<!-- cdn ie compat -->
+		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements 
+		and media queries -->		
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+		<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+		<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		<!-- jquery js -->
+		<script src="http://code.jquery.com/jquery.js"></script>
+		<script src="http//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+		
+		<!-- bootstrap -->
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+		
+		<!-- angularjs -->
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.8/angular.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.0/ui-bootstrap.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.0/ui-bootstrap-tpls.min.js"></script>
+
+		<!-- text animation: textilate.js -->
+		<script src="./js/vendor/textilate.js"></script>
+		
+		<!-- app.js -->
+		<script src="./js/app.js"></script>
+	</head>
+	
+	
+	<body ng-controller="MainController" ng-init=init()>
+
+		<!-- Header / Nav -->
+		<nav class="navbar navbar-inverse navbar-top" role="navigation">
+		  <div class="container-fluid">
+			<div class="navbar-header">
+			  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			  </button>
+			  <a class="navbar-brand" href="#">{{appconfig.title}}</a>
+			</div>
+
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			  <ul class="nav navbar-nav">
+				<li><a href="#" ng-click="init()"><span class="glyphicon glyphicon-remove"></span> Reset</a></li>
+				<li><a href="#" ng-click="run()"><span class="glyphicon glyphicon-star"></span> Generate</a></li>
+			  </ul>
+			</div><!-- /.navbar-collapse -->
+		  </div><!-- /.container-fluid -->
+		</nav>
+		
+		<!-- Main -->
+		<div class="container">
+			
+			<!-- jumbotron for output -->
+			<div class="jumbotron" ng-show="state.jumbo">
+				<div id="output"></div>
+			</div>
+			
+			<!-- markov chain sources -->
+			<div id="sources">
+				<form name="sourcesForm">
+					<div class="form-group" data-ng-repeat="source in sources">
+						<textarea ng-model="source.text" class="source-textfield form-control" style="width: 700px; height: 150px;"></textarea>
+						<br/>
+						<button type="button" class="btn btn-danger btn-sm"  ng-click="removeSource($index)"><span class="glyphicon glyphicon-remove"></span> Remove this</button>
+						<button type="button" class="btn btn-primary" ng-show="$last" ng-click="addNewSource()"><span class="glyphicon glyphicon-plus"></span> Add another source</button>  
+					</div>
+				</form>
+			</div>
+			
+			<!-- configuration -->
+			<div id="configpanel">
+				<div class="container">
+					<form name="configForm">
+						<h4>Source PreProcessing</h4>
+						<div class="form-group">
+							<label class="checkbox-inline" for="toLower">
+							<input ng-model="runconfig.lowercase" type="checkbox" id="toLower"> Zap to Lowercase</label>
+						</div>
+						<div class="form-group">
+							<label class="checkbox-inline" for="filterChars">
+							<input ng-model="runconfig.filterchars" type="checkbox" id="filterChars"> Filter Characters</label>
+						</div>
+						<h4>Markov Chain Generation</h4>
+						<div class="form-group">
+							<label class="control-label" for="maxChains"> Max # of Chains</label>
+							<input ng-model="runconfig.maxchains" type="text" class="form-control" id="maxChains" style="width:50px">
+						</div>
+						
+						<h4>Markov Chain PostProcessing</h4>
+						<div class="form-group">
+							<label class="checkbox-inline" for="haiku353">
+							<input ng-model="runconfig.haiku353" type="checkbox" id="haiku353"> Haiku Mode (3-5-3)</label>
+						</div>
+						<div class="form-group">
+							<label class="checkbox-inline" for="haiku575"> 
+							<input ng-model="runconfig.haiku575" type="checkbox" id="haiku575"> Haiku Mode (5-7-5)</label>
+						</div>
+						
+						<h4>Display</h4>
+						<div class="form-group">
+							<label class="checkbox-inline" for="animateOutput"> 
+							<input ng-model="runconfig.animate" type="checkbox" id="animateOutput"> Animate Output</label>
+						</div>
+						<div class="form-group">
+							<label class="checkbox-inline" for="speechSynth"> 
+							<input ng-model="runconfig.speech" type="checkbox" id="speechSynth"> Speech Synthesis</label>
+						</div>			
+					</form>
+				</div>
+			</div>
+			
+		</div>
+  
+	</body>
+</html> 
