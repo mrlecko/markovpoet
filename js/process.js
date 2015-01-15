@@ -1,11 +1,5 @@
-
-
-/*
-utils
- */
-
 //
-// native TTS
+// native TTS (only works on Win Chrome!?)
 //
 function speakit(text){
 	var msg = new SpeechSynthesisUtterance();
@@ -17,125 +11,165 @@ function speakit(text){
 	msg.pitch = 0.5; //0 to 2
 	msg.text = text;
 	msg.lang = 'en-GB';
-	window.speechSynthesis.speak(msg);		
+	try {
+		window.speechSynthesis.speak(msg);
+	} catch (err) {
+		console.log('speech synthesis failed:', err);
+	}
 }
 
+
 //
-// generator main func
+// __main__ for generating results
 //
 function run(sources, config){
-  // build corpus from all the preprocessed sources
-  corpus = compileSources(sources, config);
-  // generate the markov chains
-  chains = getMarkov(corpus, config);
-  // post process / filter / format the results
-  output = postProc(chains, config);
-  return renderOutput(output);
+	corpus = compileSources(sources, config);   	// build corpus
+	chains = getMarkov(corpus, config);				// generate chains
+	output = postProc(chains, config);				// post-process
+	return renderOutput(output);					// display
 } 
 
 
 //
-// compile and preprocess all the sources
+// compile and NLP pre-process all the sources
 //		
 function compileSources(sources, config){
-  corpus = ""
-  for (var i = 0; i < sources.length; i++) {
-	corpus = corpus + ' ' + prepareSource(sources[i].text);
-  }
-  console.log(corpus);
-  return corpus;
+	corpus = "";
+	for (var i = 0; i < sources.length; i++) {
+		// pre process the text
+		t = NLPPreProcess(sources[i].text);
+		// validate and add to the corpus
+		if (t.length > 0){
+			corpus += t;
+		}
+	}
+	//console.log(corpus);
+	return corpus;
 }
 
 
 //
-// ghetto regex preprocessing
-//
-function prepareSource(text){
-	// blessed are the regexps
+// NLP PreProcessor
+//	
+function NLPPreProcess(text){
+	/* 
+	 * whole text
+	 * 		normalize
+	 * 			toLowercase()
+	 * 
+	 * single char filtering / mapping
+	 * 		single character translations						
+	 * 
+	 * punctuation
+	 * 		merge duplicated whitespace	(    !)
+	 * 		merge duplicated punctuation (!!!)
+	 * 		normalize grouped sentence terminators (!!??!)
+	 * 
+	 * multi-character regexp replacements
+	 * 		contraction expansions
+	 * 		general regexp replacements
+	 * 
+	 * segmentation
+	 * 		sentence splitting
+	 */
 	
-	// lowercase
-	//text = text.toLowerCase();
+	// normalize 
+	text = text.toLowerCase();
+	text = text.replace(/[^a-zA-Z\s0-9,\.\?\!]/g, ''); // character filter
 	
-	// Capitalize
-	//text = text.replace(/^[a-z]/, function(m){ return m.toUpperCase() });
+	// single char fixes
+	text = text.replace(/\n/g,'.');				// \n > .
+	text = text.replace(/\r/g,'.');				// \r > .
 	
-	// Newline > '.'
-	text = text.replace(/\n/g,'.');
-	text = text.replace(/\r/g,'.');
+	// punctuation fixes
+	text = text.replace(/[\.\!\?]+/g,'.');		// merge terminaters
 	
-	// merge sentence terminators (!?.), otherwise they fux with sentence segmentation
-	text = text.replace(/[\.\!\?]+/g,'.');
+	// multi-char fixes
+	text = text.replace(/\s+/g,' ');			// merge whitespace
 	
-	// merge whitespace, because that fuxes with word segmentation
-	text = text.replace(/\s+/g,' ');
+	// segmentation fixes
 	
-	// filter charset
-	text = text.replace(/[^a-zA-Z\s0-9,\.\?\!]/g, '');
+	// any additional rules
+	text = text.trim(); 						// trim it
+	if (text.charAt(text.length-1) != '.') {	// add a . to the end
+		text += '.';
+	}	
 	
-	// check line breaks vs terminators
-	
-	// trim
-	test = text.trim();
-	
-	// others...
-
-	return text;
+	return text
 }
 
+//
+// Count syllables in a sequence of text
+//
+function countSyllables(text){
+	words = text.split(/[\.\!\?, ]+/g);
+	sylcount = 0;
+	for (var w = 0; w < words.length; w++) {
+		sylcount += (count_syllables(words[w])[0]); //0=min syls, 1=max syls
+	}
+	return sylcount;
+}
+
+
+//
+// Pick random chains matching a syllable sequence
+//
+function selectChainsBySyllables(syls, chains, syllable_map){
+	console.log('selecting chains by', syls);
+	console.log('syllable_map:', syllable_map);
+	result = [];
+	for (var i = 0; i < syls.length; i++) {
+		tmp = [];
+		this_syl = syls[i];
+		// get candidate chains that match syllable count
+		for (var j = 0; j < syllable_map.length; j++) {
+			//console.log('current syllable_map item:', syllable_map[j]);
+			if (syllable_map[j] == this_syl) {
+				tmp.push(chains[j]);
+			}
+		}
+		console.log('found', tmp.length, 'candidate chains for syllable count:', this_syl);
+		// select a random chain from the candidates
+		if (tmp.length > 0) {
+			result.push(tmp[Math.floor(Math.random()*tmp.length)]);
+		}
+	}
+	return result //tmp
+}
 
 //
 // generator post-proc (filtering / haiku etc)
 //
 function postProc(chains, config){
-
-  //haiku
-  if (config.haiku353 || config.haiku575) {
-	haiku = [];
-	if (config.haiku353) {
-		syls = [3,5,3];
-		} else if (config.haiku575){
-		syls = [5,7,5];
-	}
-	
-	// for each of the syllable patterns we need to find
-	for (var s = 0; s < syls.length; s++) {
-		find = syls[s];
-		console.log('finding', find);
-		// loop through the chains
+	console.log(config.syllables);
+	//
+	// return by syllable pattern
+	if (config.syllables != '') {
+		syls = config.syllables.split(',');
+		for (var i = 0; i < syls.length; i++) {
+			syls[i] = parseInt(syls[i]);
+		}
+		console.log('looking for syllable pattern:', syls);
+		// loop over the chains and build syllable map
+		syllable_map = []
 		for (var i = 0; i < chains.length; i++) {
 			this_chain = chains[i];
-			console.log('this_chain:', this_chain);
-			words = this_chain.split(' ');
-			console.log(words);
-			// and count syllables in each chain
-			found = 0;
-			for (var w = 0; w < words.length; w++) {
-				found = found + count_syllables(words[w])[0];
-			}
-			// if the count matches (and we don't already have it), push it
-			if ((found == find) && (this_chain != haiku[0])) {
-				haiku.push(this_chain);
-				break;
-			}
-			
+			syllable_map.push(countSyllables(this_chain));
 		}
-		
+		// perform chain sellection
+		haiku = selectChainsBySyllables(syls, chains, syllable_map);
+		console.log('syllable generated chains:', haiku);
+		if (haiku.length == syls.length) {
+			return haiku;
+		}
 	}
 	
-	console.log('collected haiku:', haiku);
-	if (haiku.length == 3) {
-		return haiku;
+	if (chains.length > config.maxchains) {
+		chains = chains.splice(0,config.maxchains);
 	}
-  }
-  // maxchains
-  console.log(chains.length, 'chains found');
-  if (chains.length > config.maxchains) {
-	console.log(chains.length, 'before slice');
-	chains = chains.splice(0,config.maxchains);
-	console.log(chains.length, 'after slice');
-  }
-  
-  return chains;
+	
+	// done.
+	return chains;
 }
 
 

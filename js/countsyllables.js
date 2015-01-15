@@ -30,13 +30,13 @@ function count_syllables(word){
 		}
 		
 		if (is_vowel == true) {
-			console.log(c, 'is a vowel');
+			//console.log(c, 'is a vowel');
 			if (! on_vowel) {
 				minsyl += 1;
 				maxsyl += 1;
 			} else if ((on_vowel == true) && (in_diphthong == false) && (c != lastchar)) {
 				in_diphthong = true;
-				maxsyl +=1
+				maxsyl +=1;
 			
 			}
 		}

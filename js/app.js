@@ -20,8 +20,7 @@ app.controller('MainController', function($scope) {
 					   'lowercase':true,
 					   'filterchars':true,
 					   'maxchains':3,
-					   'haiku353':true,
-					   'haiku575':true,
+					   'syllables':"3,5,3",
 					   'animate':false,
 					   'speech':false,
 						};
@@ -36,6 +35,9 @@ app.controller('MainController', function($scope) {
 	  $scope.state['jumbo'] = true;
 	  
 	  // append / animate each line of the output
+	  if (output.length == 0) {
+		  output = ['no output :('];
+	  }
 	  for (var i = 0; i < output.length; i++) {
 		if (output[i].trim().length > 0) {
 			if ($scope.runconfig['speech']) {
