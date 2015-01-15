@@ -1,4 +1,33 @@
 //
+// __main__ for generating results
+//
+function run(sources, config){
+	var corpus = compileSources(sources, config);  	// build corpus
+	var chains = getMarkov(corpus, config);			// generate chains
+	var output = postProc(chains, config);			// post-process
+	return renderOutput(output);					// display
+} 
+
+
+//
+// compile and NLP pre-process all the sources
+//		
+function compileSources(sources, config){
+	var corpus = "";
+	for (var i = 0; i < sources.length; i++) {
+		// pre process the text
+		var t = nlpPreProcess(sources[i].text);
+		// validate and add to the corpus
+		if (t.length > 0){
+			corpus += t;
+		}
+	}
+	//console.log(corpus);
+	return corpus;
+}
+
+
+//
 // native TTS (only works on Win Chrome!?)
 //
 function speakit(text){
@@ -20,38 +49,9 @@ function speakit(text){
 
 
 //
-// __main__ for generating results
-//
-function run(sources, config){
-	var corpus = compileSources(sources, config);   	// build corpus
-	var chains = getMarkov(corpus, config);				// generate chains
-	var output = postProc(chains, config);				// post-process
-	return renderOutput(output);					// display
-} 
-
-
-//
-// compile and NLP pre-process all the sources
-//		
-function compileSources(sources, config){
-	var corpus = "";
-	for (var i = 0; i < sources.length; i++) {
-		// pre process the text
-		var t = NLPPreProcess(sources[i].text);
-		// validate and add to the corpus
-		if (t.length > 0){
-			corpus += t;
-		}
-	}
-	//console.log(corpus);
-	return corpus;
-}
-
-
-//
 // NLP PreProcessor
 //	
-function NLPPreProcess(text){
+function nlpPreProcess(text){
 	/* 
 	 * whole text
 	 * 		normalize
@@ -95,8 +95,12 @@ function NLPPreProcess(text){
 		text += '.';
 	}	
 	
+	// split and recombine
+	text = text.split(/[, ]+/g).join(' ').trim();
+	
 	return text
 }
+
 
 //
 // Count syllables in a sequence of text
@@ -148,6 +152,37 @@ function selectChainsBySyllables(syls, chains, syllable_map){
 	return result //tmp
 }
 
+
+//
+// Syllable / Haiku filter
+//
+function filterBySyllables(syls, chains, max) {
+	var syls = syls.split(',');
+	for (var i = 0; i < syls.length; i++) {
+		syls[i] = parseInt(syls[i]);
+	}
+	console.log('looking for syllable pattern:', syls);
+	// loop over the chains and build syllable map
+	var syllable_map = []
+	for (var i = 0; i < chains.length; i++) {
+		var this_chain = chains[i];
+		syllable_map.push(countSyllables(this_chain));
+	}
+	// perform chain sellection
+	var haiku = selectChainsBySyllables(syls, chains, syllable_map);
+	console.log('syllable generated chains:', haiku);
+	if (haiku.length == syls.length) {
+		return haiku;
+	}	
+	return ["(╯°□°）╯︵ ┻━┻ /(You didn't roll anything matching the set template)"]
+}
+
+
+function limit(i, max){
+	if (i.length > max) {return i.splice(0, max);}
+}
+
+
 //
 // generator post-proc (filtering / haiku etc)
 //
@@ -156,31 +191,11 @@ function postProc(chains, config){
 	//
 	// return by syllable pattern
 	if (config.syllables != '') {
-		var syls = config.syllables.split(',');
-		for (var i = 0; i < syls.length; i++) {
-			syls[i] = parseInt(syls[i]);
-		}
-		console.log('looking for syllable pattern:', syls);
-		// loop over the chains and build syllable map
-		var syllable_map = []
-		for (var i = 0; i < chains.length; i++) {
-			var this_chain = chains[i];
-			syllable_map.push(countSyllables(this_chain));
-		}
-		// perform chain sellection
-		var haiku = selectChainsBySyllables(syls, chains, syllable_map);
-		console.log('syllable generated chains:', haiku);
-		if (haiku.length == syls.length) {
-			return haiku;
-		}
-	}
-	
-	if (chains.length > config.maxchains) {
-		chains = chains.splice(0,config.maxchains);
+		return filterBySyllables(config.syllables, chains, config.maxchains);
 	}
 	
 	// done.
-	return chains;
+	return limit(chains, config.maxchains);
 }
 
 
@@ -191,4 +206,3 @@ function renderOutput(output, config){
   // do selection & templating here
   return output
 }
-

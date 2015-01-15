@@ -38,6 +38,8 @@ app.controller('MainController', function($scope) {
 	  if (output.length == 0) {
 		  output = ['no output :('];
 	  }
+	  output.push('');
+	  output.push(art[Math.floor(Math.random()*art.length)]);
 	  for (var i = 0; i < output.length; i++) {
 		if (output[i].trim().length > 0) {
 			if ($scope.runconfig['speech']) {
