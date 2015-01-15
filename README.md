@@ -1,19 +1,14 @@
 ## Synopsis
 
-Bad poetry using Markov chains
-
-## Motivation
-
+Generate bad poetry using Markov chains
 
 ## Installation
 
 Clone / Open index.html
 
-## Tests
-
-
 ## Contributors
 
+@mrlecko
 
 ## License
 
