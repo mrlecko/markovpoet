@@ -25,9 +25,15 @@ app.controller('MainController', function($scope) {
                        'maxchains':3,
                        'syllables':"3,5,3",
                        'animate':true,
-                       'speech':false,
+                       'speech':true,
                         };
+        $scope.toggleconfig();
         }
+
+    $scope.toggleconfig = function() {
+        $('#sources').toggle();
+        $('#configpanel').toggle();   
+    }
 
     // the generate button
     $scope.run = function(){
@@ -56,8 +62,10 @@ app.controller('MainController', function($scope) {
                 
                 // speak it
                 if ($scope.runconfig['speech']) {
-                    speakit(output[i]);
+                    if (i < output.length) {
+                        speakit(output[i]);
                     }
+                }
                     
                 
                 // animate it 
@@ -65,7 +73,6 @@ app.controller('MainController', function($scope) {
                     $(function () {
                         console.log('supposedly animating:', output[i]);
                         $('#'+this_el).textillate({ in: { shuffle: true, effect: 'rollIn', delay:20 } });
-                        //sleep(100);
                     })
                 } else {
                 // or just show it        
@@ -74,9 +81,6 @@ app.controller('MainController', function($scope) {
             }
           } // endfor
         if ($scope.runconfig['animate']) {  
-            //sleep(1500);
-            //$('#output p').fadeOut(5000);//textillate({ out: { shuffle: true, effect: 'rollOut', delay:50 } });//
-            //$('#output1').textillate('out')
         }
       }
     } // end run

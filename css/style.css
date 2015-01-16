@@ -4,7 +4,7 @@
 
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
-* {
+.navbar {
   -webkit-border-radius: 0 !important;
      -moz-border-radius: 0 !important;
           border-radius: 0 !important;
@@ -12,4 +12,4 @@
   
 #output p { width:100%; text-align: center; font-family: 'Lakki Reddy', cursive; font-size:30px; color:#000;}
 
-.jumbotron {background-image: url("http://freeseamlesstextures.com/images/13-old-parchment-background-lrg.jpg");}
+.jumbotron {background-image: url("../images/13-old-parchment-background-lrg.jpg");}
