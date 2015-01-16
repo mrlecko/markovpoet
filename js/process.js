@@ -174,7 +174,7 @@ function filterBySyllables(syls, chains, max) {
     if (haiku.length == syls.length) {
         return haiku;
     }   
-    return ["(╯°□°）╯︵ ┻━┻ <br/> (You didn't roll anything matching the set template)"]
+    return -1; //["(╯°□°）╯︵ ┻━┻ <br/> (You didn't roll anything matching the set template)"]
 }
 
 
@@ -191,7 +191,15 @@ function postProc(chains, config){
     //
     // return by syllable pattern
     if (config.syllables != '') {
-        return filterBySyllables(config.syllables, chains, config.maxchains);
+        var result = -1;
+        var loops = 0;
+        while (result == -1 && loops < 10) {
+            console.log(result);
+            loops+=1
+            result = filterBySyllables(config.syllables, chains, config.maxchains);
+        }
+        if (result == -1) { return ['failed to generate a haiku','roll again!']}
+        return result;
     }
     
     // done.
