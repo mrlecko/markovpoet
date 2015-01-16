@@ -62,7 +62,7 @@ app.controller('MainController', function($scope) {
                 
                 // speak it
                 if ($scope.runconfig['speech']) {
-                    if (i < output.length) {
+                    if (i < output.length-1) {
                         speakit(output[i]);
                     }
                 }
