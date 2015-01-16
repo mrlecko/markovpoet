@@ -69,7 +69,7 @@ app.controller('MainController', function($scope) {
                     })
                 } else {
                 // or just show it        
-                $('#output p :last').show();
+                    $('#output p :last').show();
                 }
             }
           } // endfor

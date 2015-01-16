@@ -2,6 +2,23 @@
 // syllable counter
 //  - ported from https://github.com/akkana/scripts/blob/master/countsyl
 
+// alternatively..
+
+/*
+ * The Written Method Rules
+ * 
+ * Count the number of vowels (A, E, I, O, U) in the word.
+ * Add 1 every time the letter 'y' makes the sound of a vowel (A, E, I, O, U).
+ * Subtract 1 for each silent vowel (like the silent 'e' at the end of a word).
+ * Subtract 1 for each diphthong or triphthong in the word.
+ *      Diphthong: when 2 vowels make only 1 sound (aw, oy, oo)
+ *      Triphthong: when 3 vowels make only 1 sound (iou)
+ * 
+ * Add 1 if the word ends with "le" or "les".
+ * 
+ * 
+*/
+
 function count_syllables(word){
     vowels = ['a', 'e', 'i', 'o', 'u'];
 
