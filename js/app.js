@@ -24,7 +24,7 @@ app.controller('MainController', function($scope) {
                        'filterchars':true,
                        'maxchains':3,
                        'syllables':"3,5,3",
-                       'animate':false,
+                       'animate':true,
                        'speech':false,
                         };
         }
@@ -50,18 +50,36 @@ app.controller('MainController', function($scope) {
           // render the output
           for (var i = 0; i < output.length; i++) {
             if (output[i].trim().length > 0) {
+                // append each row
+                this_el = 'output' + i;
+                $('#output').append($("<p id=" + this_el + ">" + output[i] + "</p>"));
+                
+                // speak it
                 if ($scope.runconfig['speech']) {
                     speakit(output[i]);
                     }
-                $('#output').append($("<p>" + output[i] + "</p>").hide().fadeIn(2000));
-                //$('#output').append($("<p>" + output[i] + "</p>").textillate());
-                $(function () {
-                    $('#output p').textillate();
-                })
+                    
+                
+                // animate it 
+                if ($scope.runconfig['animate']) {
+                    $(function () {
+                        console.log('supposedly animating:', output[i]);
+                        $('#'+this_el).textillate({ in: { shuffle: true, effect: 'rollIn', delay:20 } });
+                        //sleep(100);
+                    })
+                } else {
+                // or just show it        
+                $('#output p :last').show();
+                }
             }
-          }
+          } // endfor
+        if ($scope.runconfig['animate']) {  
+            //sleep(1500);
+            //$('#output p').fadeOut(5000);//textillate({ out: { shuffle: true, effect: 'rollOut', delay:50 } });//
+            //$('#output1').textillate('out')
+        }
       }
-    }
+    } // end run
 
     // add additional text source
     $scope.addNewSource = function(){
@@ -76,3 +94,13 @@ app.controller('MainController', function($scope) {
     }
 });
 
+
+// sleep func for animator
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}

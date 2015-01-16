@@ -10,5 +10,6 @@
           border-radius: 0 !important;
   }
   
-#output p { width:100%; text-align: center; }
+#output p { width:100%; text-align: center; font-family: 'Lakki Reddy', cursive; font-size:30px; color:#000;}
 
+.jumbotron {background-image: url("http://freeseamlesstextures.com/images/13-old-parchment-background-lrg.jpg");}
