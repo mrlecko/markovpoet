@@ -31,7 +31,7 @@ function parse_text(text) {
       } catch (err) {
         console.log(err);
       }
-    else {
+    } else {
       result[stripped[i]] = [stripped[i+1]];
     }
   };
