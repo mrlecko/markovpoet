@@ -6,6 +6,7 @@
 // containing the possible transition states
 // for the words in the text.
 function parse_text(text) {
+    
   var result = {};
   
   // Cut the text into individual words...
@@ -25,8 +26,11 @@ function parse_text(text) {
   for (i=1, lens = stripped.length; i < lens; i++) 
   {
     if (stripped[i] in result) {
-      result[stripped[i]].push(stripped[i+1]);
-    }
+      try {
+        result[stripped[i]].push(stripped[i+1]);
+      } catch (err) {
+        console.log(err);
+      }
     else {
       result[stripped[i]] = [stripped[i+1]];
     }
