@@ -68,7 +68,8 @@
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
                         <li><a href="#" ng-click="init()"><span class="glyphicon glyphicon-remove"></span> Reset</a></li>
-                        <li><a href="#" ng-click="run()"><span class="glyphicon glyphicon-star"></span> Generate</a></li>
+                        <li><a href="#" ng-click="toggleconfig()"><span class="glyphicon glyphicon-wrench"></span> Config</a></li>
+                        <!--<li><a class="btn btn-primary" href="#" ng-click="run()"><span class="glyphicon glyphicon-star"></span> Generate</a></li>-->
                     </ul>
                 </div><!-- /.navbar-collapse -->
             </div><!-- /.container-fluid -->
@@ -77,7 +78,9 @@
         
         <!-- Main -->
         <div class="container">
-            
+            <div style="width:100%; margin-bottom:20px;">
+                <center><button class="btn btn-primary btn-lg" href="#" ng-click="run()"><span class="glyphicon glyphicon-star"></span> Generate Haiku</button></center>
+            </div>
             <!-- jumbotron for output -->
             <div class="jumbotron" ng-show="state.jumbo">
                 <div id="output"></div>
@@ -85,6 +88,7 @@
             
             <!-- markov chain sources -->
             <div id="sources">
+                <h3>Source Texts</h3>
                 <form name="sourcesForm">
                     <div class="form-group" data-ng-repeat="source in sources">
                         <strong>{{source.title}}</strong>
