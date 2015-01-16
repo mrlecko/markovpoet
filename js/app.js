@@ -17,7 +17,7 @@ app.controller('MainController', function($scope) {
       // state
       $scope.state = {'jumbo':false,};
       // app config
-      $scope.appconfig = {'title':"Markov Toy"};
+      $scope.appconfig = {'title':"Markov Poet"};
       // generator config
       $scope.runconfig = {
                        'lowercase':true,
@@ -62,7 +62,7 @@ app.controller('MainController', function($scope) {
                 
                 // speak it
                 if ($scope.runconfig['speech']) {
-                    if (i < output.length) {
+                    if (i < output.length-1) {
                         speakit(output[i]);
                     }
                 }
