@@ -17,7 +17,7 @@ app.controller('MainController', function($scope) {
       // state
       $scope.state = {'jumbo':false,};
       // app config
-      $scope.appconfig = {'title':"Markov Toy"};
+      $scope.appconfig = {'title':"Markov Poet"};
       // generator config
       $scope.runconfig = {
                        'lowercase':true,
