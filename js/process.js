@@ -174,7 +174,7 @@ function filterBySyllables(syls, chains, max) {
     if (haiku.length == syls.length) {
         return haiku;
     }   
-    return ["(╯°□°）╯︵ ┻━┻ /(You didn't roll anything matching the set template)"]
+    return ["(╯°□°）╯︵ ┻━┻ <br/> (You didn't roll anything matching the set template)"]
 }
 
 

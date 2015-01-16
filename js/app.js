@@ -5,12 +5,15 @@ var app = angular.module('app', []);
 
 app.controller('MainController', function($scope) {
     
-    // app initialization / reset button
     $scope.init = function(){
-
+	
       // gather default sources
-      $scope.sources = [{'text':portal}, {'text':maiden}, {'text':kanye}, {'text':wu}, {'text':jedi}, {'text':madsci}, {'text':insults}];
-
+      $scope.sources = [];
+      console.log(data);
+      for (var i = 0; i < data.length; i++){
+          $scope.sources.push(data[i]);
+      }
+      
       // state
       $scope.state = {'jumbo':false,};
       // app config
@@ -34,23 +37,29 @@ app.controller('MainController', function($scope) {
       // turn on the jumbotron
       $scope.state['jumbo'] = true;
       
-      // append / animate each line of the output
+      // no results fallback
       if (output.length == 0) {
           output = ['no output :('];
-      }
-      output.push('');
-      output.push(art[Math.floor(Math.random()*art.length)]);
-      for (var i = 0; i < output.length; i++) {
-        if (output[i].trim().length > 0) {
-            if ($scope.runconfig['speech']) {
-                speakit(output[i]);
-                }
-            $('#output').append($("<p>" + output[i] + "</p>").hide().fadeIn(2000));
-            //$('#output').append($("<p>" + output[i] + "</p>").textillate());
-            $(function () {
-                $('#output p').textillate();
-            })
-        }
+      } else {
+          // add the art
+          if (output.length > 1) {
+            output.push('');
+            output.push(art[Math.floor(Math.random()*art.length)]);
+          }
+          
+          // render the output
+          for (var i = 0; i < output.length; i++) {
+            if (output[i].trim().length > 0) {
+                if ($scope.runconfig['speech']) {
+                    speakit(output[i]);
+                    }
+                $('#output').append($("<p>" + output[i] + "</p>").hide().fadeIn(2000));
+                //$('#output').append($("<p>" + output[i] + "</p>").textillate());
+                $(function () {
+                    $('#output p').textillate();
+                })
+            }
+          }
       }
     }
 

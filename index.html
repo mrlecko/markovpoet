@@ -84,6 +84,7 @@
             <div id="sources">
                 <form name="sourcesForm">
                     <div class="form-group" data-ng-repeat="source in sources">
+                        <strong>{{source.title}}</strong>
                         <textarea ng-model="source.text" class="source-textfield form-control" style="width: 700px; height: 150px;"></textarea>
                         <br/>
                         <button type="button" class="btn btn-danger btn-sm"  ng-click="removeSource($index)"><span class="glyphicon glyphicon-remove"></span> Remove this</button>
@@ -107,7 +108,7 @@
                         </div>
                         <h4>Markov Chain Generation</h4>
                         <div class="form-group">
-                            <label class="control-label" for="maxChains"> Max # of Chains</label>
+                            <label class="control-label" for="maxChains"> Number of rows to output</label>
                             <input ng-model="runconfig.maxchains" type="text" class="form-control" id="maxChains" style="width:50px">
                         </div>
                         
