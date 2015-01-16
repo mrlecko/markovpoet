@@ -198,7 +198,7 @@ function postProc(chains, config){
             loops+=1
             result = filterBySyllables(config.syllables, chains, config.maxchains);
         }
-        if (result == -1) { return ['failed to generate a haiku. roll again']}
+        if (result == -1) { return ['failed to generate a haiku','roll again!']}
         return result;
     }
     
