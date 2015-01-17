@@ -31,16 +31,16 @@ function compileSources(sources, config){
 // native TTS (only works on Win Chrome!?)
 //
 function speakit(text){
-    var msg = new SpeechSynthesisUtterance();
-    var voices = window.speechSynthesis.getVoices();
-    msg.voice = voices[1]; // Note: some voices don't support altering params
-    msg.voiceURI = 'native';
-    msg.volume = 1; // 0 to 1
-    msg.rate = 1; // 0.1 to 10
-    msg.pitch = 0.5; //0 to 2
-    msg.text = text;
-    msg.lang = 'en-GB';
     try {
+        var msg = new SpeechSynthesisUtterance();
+        var voices = window.speechSynthesis.getVoices();
+        msg.voice = voices[1]; // Note: some voices don't support altering params
+        msg.voiceURI = 'native';
+        msg.volume = 1; // 0 to 1
+        msg.rate = 1; // 0.1 to 10
+        msg.pitch = 0.5; //0 to 2
+        msg.text = text;
+        msg.lang = 'en-GB';
         window.speechSynthesis.speak(msg);
     } catch (err) {
         console.log('speech synthesis failed:', err);
